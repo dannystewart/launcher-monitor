@@ -14,18 +14,14 @@ for index, param in A_Args {
 }
 
 ; ============================================================================
-; CONFIGURATION
+; CONFIGURATION - loaded from config.ini
 ; ============================================================================
 
-; Process names (without .exe extension)
-LauncherProcess := "Bethesda.net_Launcher"
-GameProcess := "eso64"
-
-; Timeout in minutes before closing launcher (when game is not running)
-TimeoutMinutes := 30
-ForceCloseTimeoutSeconds := 10
-
-; Enable logging (creates a log file)
+; Configuration variables (will be loaded from config.ini)
+LauncherProcess := ""
+GameProcess := ""
+TimeoutMinutes := 0
+ForceCloseTimeoutSeconds := 0
 EnableLogging := true
 
 ; ============================================================================
@@ -265,34 +261,34 @@ ReloadScript(*) {
 }
 
 InitializeScript() {
-    ; Load configuration from INI file if it exists
+    ; Load configuration from config.ini
     ConfigFile := A_ScriptDir . "\config.ini"
-    if (FileExist(ConfigFile)) {
-        LoadedLauncher := IniRead(ConfigFile, "Settings", "LauncherProcess", LauncherProcess)
-        LoadedGame := IniRead(ConfigFile, "Settings", "GameProcess", GameProcess)
-        LoadedTimeout := IniRead(ConfigFile, "Settings", "TimeoutMinutes", TimeoutMinutes)
-        LoadedForceTimeout := IniRead(ConfigFile, "Settings", "ForceCloseTimeoutSeconds", ForceCloseTimeoutSeconds)
-        LoadedLogging := IniRead(ConfigFile, "Settings", "EnableLogging", EnableLogging)
-
-        if (LoadedLauncher != "") {
-            global LauncherProcess := LoadedLauncher
-            global GameProcess := LoadedGame
-            global TimeoutMinutes := Integer(LoadedTimeout)
-            global ForceCloseTimeoutSeconds := Integer(LoadedForceTimeout)
-            global EnableLogging := Integer(LoadedLogging)
-        }
+    if (!FileExist(ConfigFile)) {
+        ; Create config.ini if it doesn't exist
+        IniWrite("", ConfigFile, "Settings", "LauncherProcess")
+        IniWrite("", ConfigFile, "Settings", "GameProcess")
+        IniWrite(30, ConfigFile, "Settings", "TimeoutMinutes")
+        IniWrite(10, ConfigFile, "Settings", "ForceCloseTimeoutSeconds")
+        IniWrite(true, ConfigFile, "Settings", "EnableLogging")
     }
+
+    ; Load configuration from config.ini
+    global LauncherProcess := IniRead(ConfigFile, "Settings", "LauncherProcess", "")
+    global GameProcess := IniRead(ConfigFile, "Settings", "GameProcess", "")
+    global TimeoutMinutes := IniRead(ConfigFile, "Settings", "TimeoutMinutes", 0)
+    global ForceCloseTimeoutSeconds := IniRead(ConfigFile, "Settings", "ForceCloseTimeoutSeconds", 0)
+    global EnableLogging := IniRead(ConfigFile, "Settings", "EnableLogging", true)
 
     LogMessage("Script started - Monitoring " . LauncherProcess . ".exe and " . GameProcess . ".exe")
 
     ; Show initial configuration reminder if using defaults
-    if (LauncherProcess = "YourLauncherName") {
+    if (LauncherProcess = "") {
         MsgBox("Please right-click the system tray icon and select `"Configure`" to set your launcher and game process names.", "Configuration Required")
-    }
-
-    ; Show startup notification (unless in silent mode)
-    if (!SilentMode) {
-        TrayTip("Steam Launcher Monitor started", "Monitoring " . LauncherProcess . ".exe and " . GameProcess . ".exe", "Iconi Mute")
+    } else {
+        ; Show startup notification (unless in silent mode)
+        if (!SilentMode) {
+            TrayTip("Steam Launcher Monitor started", "Monitoring " . LauncherProcess . ".exe and " . GameProcess . ".exe", "Iconi Mute")
+        }
     }
 }
 
