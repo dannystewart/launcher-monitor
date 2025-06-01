@@ -123,26 +123,6 @@ To have the script start automatically with Windows:
 - **No arguments**: Normal startup with notification
 - **`-silent` or `/silent`**: Start without showing startup notification (perfect for startup scripts)
 
-## Troubleshooting
-
-### Script doesn't detect processes
-
-- Verify process names in Task Manager (Details tab)
-- Process names are case-sensitive
-- Don't include the `.exe` extension in configuration
-
-### Launcher closes too quickly/slowly
-
-- Adjust the main timeout in configuration (minutes)
-- Adjust the force close timeout for stubborn launchers (seconds)
-- Check the log file to see timing information
-
-### Script not working
-
-- Make sure **AutoHotkey v2** is installed (not v1.1)
-- Check if antivirus is blocking the script
-- Run as administrator if needed
-
 ## Log File
 
 The script creates `launcher_monitor.log` with timestamps for:
@@ -151,32 +131,5 @@ The script creates `launcher_monitor.log` with timestamps for:
 - When timeouts occur and launcher is closed
 - Configuration changes
 - Script startup and shutdown
-
-## Safety Features
-
-- Uses graceful window close first, then force-close if needed
-- Configurable force-close timeout for stubborn launchers
-- Only closes the specific launcher process you configure
-- Logs all actions for troubleshooting
-- Can be easily disabled/enabled via tray menu
-- Silent mode for automated startup
-
-## New Features
-
-- **AutoHotkey v2 compatibility**
-- **Silent mode** with `-silent` command line flag
-- **Reload script** option in tray menu
-- **Configurable force-close timeout** for launchers that take time to close
-- **Startup notifications** (can be disabled with silent mode)
-
-## Customization
-
-You can modify the script to:
-
-- Change the check interval (default: 10 seconds)
-- Add multiple game/launcher pairs
-- Customize notification behavior
-- Add additional hotkeys
-- Modify timeout behaviors
 
 Enjoy your accurate Steam hour counts!
