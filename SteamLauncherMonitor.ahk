@@ -93,6 +93,7 @@ CheckProcesses() {
         if (IsGameRunning) {
             global IsGameRunning := false
             LogMessage("Game closed: " . GameProcess . ".exe")
+            TrayTip("Game closed: " . GameProcess . ".exe", "Steam Launcher Monitor", "Iconi Mute")
         }
     }
 
