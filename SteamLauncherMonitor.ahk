@@ -276,11 +276,26 @@ InitializeScript() {
     ; Load configuration from config.ini
     global LauncherProcess := IniRead(ConfigFile, "Settings", "LauncherProcess", "")
     global GameProcess := IniRead(ConfigFile, "Settings", "GameProcess", "")
-    global TimeoutMinutes := IniRead(ConfigFile, "Settings", "TimeoutMinutes", 0)
-    global ForceCloseTimeoutSeconds := IniRead(ConfigFile, "Settings", "ForceCloseTimeoutSeconds", 0)
+
+    ; Read TimeoutMinutes with proper default and validation
+    TimeoutValue := IniRead(ConfigFile, "Settings", "TimeoutMinutes", "30")
+    global TimeoutMinutes := (TimeoutValue = "" || !IsNumber(TimeoutValue) || TimeoutValue < 1) ? 30 : Integer(TimeoutValue)
+
+    ; Read ForceCloseTimeoutSeconds with proper default and validation
+    ForceCloseValue := IniRead(ConfigFile, "Settings", "ForceCloseTimeoutSeconds", "10")
+    global ForceCloseTimeoutSeconds := (ForceCloseValue = "" || !IsNumber(ForceCloseValue) || ForceCloseValue < 1) ? 10 : Integer(ForceCloseValue)
+
     global EnableLogging := IniRead(ConfigFile, "Settings", "EnableLogging", true)
 
+    ; Explicitly reset all state variables to prevent persistence from previous runs
+    global LauncherStartTime := 0
+    global GameLastSeen := 0
+    global IsGameRunning := false
+    global IsLauncherRunning := false
+
     LogMessage("Script started - Monitoring " . LauncherProcess . ".exe and " . GameProcess . ".exe")
+    LogMessage("Configuration loaded - Timeout: " . TimeoutMinutes . " minutes, Force Close: " . ForceCloseTimeoutSeconds . " seconds")
+    LogMessage("State variables reset - LauncherStartTime: " . LauncherStartTime . ", GameLastSeen: " . GameLastSeen . ", IsGameRunning: " . IsGameRunning . ", IsLauncherRunning: " . IsLauncherRunning)
 
     ; Show initial configuration reminder if using defaults
     if (LauncherProcess = "") {
